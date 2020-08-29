@@ -551,7 +551,7 @@ mkXPromptImplementation historyKey conf om = do
           (createGC d w)
           (freeGC d)
           (\gc -> do
-            selectInput d w $ exposureMask .|. keyPressMask
+            selectInput d w $ exposureMask .|. keyPressMask .|. buttonPressMask
             setGraphicsExposures d gc False
             let hs = fromMaybe [] $ M.lookup historyKey hist
                 st = initState d rw w s om gc fs hs conf numlock
@@ -615,7 +615,7 @@ eventLoop handle stopAction = do
         []  -> do
                 d <- gets dpy
                 io $ allocaXEvent $ \e -> do
-                    maskEvent d (exposureMask .|. keyPressMask) e
+                    maskEvent d (exposureMask .|. keyPressMask .|. buttonPressMask) e
                     ev <- getEvent e
                     (ks,s) <- if ev_event_type ev == keyPress
                               then lookupString $ asKeyEvent e
